@@ -38,14 +38,6 @@ app.use(session({ secret: 'anythingyouwanttotype' })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
-var requestTime = function(req, res, next){
-  console.log('Request at '+Date.now());
-  req.requestTime = Date.now();
-  next();
-};
-
-app.use(requestTime);
-
 //Use routes
 app.use('/', routes);
 app.use('api', routesApi);
