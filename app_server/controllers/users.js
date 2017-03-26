@@ -4,7 +4,7 @@ module.exports = new User();
 
 function User() {
     // get home page
-    this.readHomePage = function(req, res, next) {
+    this.readHomePage = function(req, res) {
         var data = {
             user: {
 
@@ -14,7 +14,6 @@ function User() {
                 css: [], // FIX: add name
             },
         };
-
         res.render('index', { data: data });
     };
 
