@@ -3,6 +3,8 @@ var router = express.Router();
 var ctrlUsers = require('../controllers/users');
 var passport = require('passport');
 
+var dbTest = require('../../libs/node/dbHelper');
+
 //////// Users
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
 
