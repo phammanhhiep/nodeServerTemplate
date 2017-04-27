@@ -1,4 +1,4 @@
-var app = angular.module ('posApp', ['ngRoute']);
+var app = angular.module ('gsApp', ['ngRoute']);
 
 app
 	.config (['$routeProvider', config])

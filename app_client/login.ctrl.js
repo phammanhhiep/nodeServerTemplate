@@ -1,7 +1,5 @@
 (function () {
-	angular
-		.module ('posApp')
-		.controller ('LoginCtrl', ['$route', '$scope', '$location', 'authentication', LoginCtrl])
+	app.controller ('LoginCtrl', ['$route', '$scope', '$location', 'authentication', LoginCtrl])
 
 
 	function LoginCtrl ($route, $scope, $location, authentication) {

@@ -1,5 +1,4 @@
-angular
-	.module ('posApp')
+app
 	.directive ('messageWidget', [messageWidget])
 	.directive ('assetWidget', [assetWidget])
 

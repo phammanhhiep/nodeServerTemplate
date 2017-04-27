@@ -1,5 +1,5 @@
 (function () {
-	angular
+	app
 		.module ('posApp')
 		.service ('authentication', ['$window', '$http', authentication]);
 

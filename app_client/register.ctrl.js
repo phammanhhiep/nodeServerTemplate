@@ -1,8 +1,5 @@
 (function () {
-	angular
-		.module ('posApp')
-		.controller ('RegisterCtrl', ['$location', 'authentication', RegisterCtrl])
-
+	app.controller ('RegisterCtrl', ['$location', 'authentication', RegisterCtrl]);
 
 	function RegisterCtrl ($location, authentication) {
 		var vm = this;

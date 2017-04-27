@@ -17,6 +17,7 @@ module.exports = function(passport) {
         });
     });
 
+    // NOTICE: review
 	passport.use (new GoogleStrategy({
 		clientID: '734454815123-6mm9nbsp7gd4ibiumb84kk30c3kd2as0.apps.googleusercontent.com',
 		clientSecret: 'YLY5INoa9CqzBgpkw10lmbX6',
