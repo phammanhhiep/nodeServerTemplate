@@ -1,10 +1,27 @@
-var helper = require('../../libs/node/helper');
+var helper = require('../../libs/node/helper')
+var dbHelper = require('../../libs/node/dbHelper')
+var requestHelper = require('../../libs/node/requestHelper')
+var mongoose = require('mongoose');
+var UserModel = mongoose.model('users');
 
-module.exports = new User();
+module.exports = new Users();
 
-function User() {
-    // get home page
-    this.createUser = function(req, res) {
-        
-    };
+function Users() {
+
+	this.readSomeUsers = function(req, res) {
+		dbHelper.findSome(req, res, UserModel)
+	};
+
+	this.readOneUserById = function(req, res) {
+		dbHelper.findOneById(req, res, UserModel, 'uId')
+	};
+
+	this.createOneUser = function(req, res) {
+		dbHelper.insertOne(req, res, UserModel);
+	};
+
+	this.updateOneUserById = function(req, res) {
+		dbHelper.updateOneById(req, res, UserModel, 'uId')
+	};
+
 };

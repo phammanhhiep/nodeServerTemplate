@@ -1,5 +1,20 @@
-extends ./layout
-
-block content
-	h1=data.look.title
-	a(href='/auth/google') Sign in
+div(class="medium-6 columns medium-push-2")
+	h2(class="text-center") Green Space
+	h3(class="text-center") Just come and get all things done
+	div(class="row column")
+		div(class="button-group expanded")
+			a(class="button") Google +
+			a(class="button") Facebook
+	hr
+	div(class="row")
+		form(ng-submit="vm.submitLogin()")
+			div(class="column small-12")
+				label Phone / Email
+					input(type="text", ng-model="vm.credentials.username" required)
+			div(class="column small-12")
+				label Password
+					input(type="password", ng-model="vm.credentials.password" required)
+			div(class="column small-12 text-center")
+				input(class="button" type="submit" value="Login")
+		div(class="column small-12 text-center")
+			<span>Don't have an account? <a href="#!/register">Sign up</a></span>

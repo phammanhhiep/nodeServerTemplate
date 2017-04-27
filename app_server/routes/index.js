@@ -1,22 +1,31 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
-var ctrlUsers = require('../controllers/users');
 var passport = require('passport');
+var jwt = require ('express-jwt');
 
-var dbTest = require('../../libs/node/dbHelper');
+var auth = jwt ({
+    secret: process.env.JWT_SECRET,
+    userProperty: 'payload', // NOTICE
+});
 
-//////// Users
 router.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+router.get('/auth/google/callback', 
+	passport.authenticate(
+		'google', 
+		{
+			successRedirect : '/',
+			failureRedirect : '/login'
+		}
+	)
+);
 
-// the callback after google has authenticated the user
-router.get('/auth/google/callback',
-    passport.authenticate('google', {
-            successRedirect : '/',
-            failureRedirect : '/login'
-    }));
+// router.get('/', auth, othersCtrl.angularApp); // TEST local authen
+router.get('/', othersCtrl.angularApp);
 
-router.get('/', ctrlUsers.readHomePage);
 
-router.get('/login', ctrlUsers.readLoginPage);
+//Login page
+router.get('/login', othersCtrl.login);
+router.get('/register', othersCtrl.register);
+
 
 module.exports = router;

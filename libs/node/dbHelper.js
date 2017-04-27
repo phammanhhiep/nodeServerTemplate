@@ -1,27 +1,29 @@
 // interact with database: mongodb
 var mongoose = require('mongoose');
 var request = require('request');
-require('../../app_api/models/db');
-var UserModel = mongoose.model('users');
 var requestHelper = require('./requestHelper');
 
 module.exports = new function (){
 	//insert new User
-	this.insertOne = function (req, res, Model) {
+	this.insertOne = function (req, res, Model, beforeAction, afterAction) {
 		try{
-			var query = new Model (req.body);
-			query.save (function (err, data){
+			var obj = new Model (req.body);
+			if (beforeAction) beforeAction (obj, req.body);
+
+			obj.save (function (err, data){
 				if (err){
 					console.log(err)
 					requestHelper.sendJsonRes(res, 404, err);
 					return
 				}
-				requestHelper.sendJsonRes (res, 201, {status: 'success', data: data});			
+
+				if (afterAction) afterAction (obj, res, data); // intend to call methods of the obj
+				else requestHelper.sendJsonRes (res, 201, {data: data});			
 			});	
 		}
 		catch(ex){
 			console.log(ex)
-			requestHelper.sendJsonRes (res, 500, {status: 'failure', message: ex});
+			requestHelper.sendJsonRes (res, 500, {message: ex});
 		}
 	};
 
@@ -34,12 +36,12 @@ module.exports = new function (){
 					return
 				}
 
-				requestHelper.sendJsonRes (res, 201, {status: 'success', data: data.insertedCount + ' documents being inserted'});			
+				requestHelper.sendJsonRes (res, 201, {data: data.insertedCount + ' documents being inserted'});			
 			});
 		}
 		catch (ex){
 			console.log(ex)
-			requestHelper.sendJsonRes (res, 500, {status: 'failure', message: ex});		
+			requestHelper.sendJsonRes (res, 500, {message: ex});		
 		}
 	};
 
@@ -47,17 +49,18 @@ module.exports = new function (){
 		try {
 			if (req.params && req.params[idName]){
 				var idValue = req.params[idName];
-				var update = req.body;	
+				var update = req.body;
 				var query = Model
-					.findByIdAndUpdate (mongoose.Types.ObjectId(idValue), {$set: update}, {runValidators: true});
+					.findByIdAndUpdate (mongoose.Types.ObjectId(idValue), update, {runValidators: true});
 				requestHelper.stdExec (res, query);
 			}
 			else{
-				requestHelper.sendJsonRes(res, 404, {
+				console.log ('Error: no passed params');
+				requestHelper.sendJsonRes(res, 400, {
 					message: 'no passed params'			
 				});
 			}
-		} 
+		}
 		catch (ex){
 			console.log(ex)
 			requestHelper.sendJsonRes(res, 500, {
@@ -68,29 +71,33 @@ module.exports = new function (){
 
 	this.findOneById = function(req, res, Model, idName) {
 		if (req.params && req.params[idName]){
+
 			var idValue = req.params[idName];
-			var attrs = req.query.attrs;		
+			var attrs = req.query.attrs;
+			console.log(idValue)		
 			var query = Model
 				.findById(idValue)
 				.select(attrs);
 			requestHelper.stdExec (res, query);
 		}
 		else{
+			console.log ('Error: no passed params');
 			requestHelper.sendJsonRes(res, 404, {
 				message: 'no passed params'			
 			});
 		}	 	 
 	};
 
-	this.findSome = function(req, res, Model, paramFunc) {
+	this.findSome = function(req, res, Model, next) {
 		try{
-			var queryParams = paramFunc (req.query);
-			var query = Model.find(queryParams.conditions, queryParams.projection, queryParams.opts);
-			requestHelper.stdExec (res, query);
+			var queryInput = req.query.queryInput ? JSON.parse (req.query.queryInput) : {conditions: null, projection: null, opts: null}; // queyInput is a js object being stringified
+			console.log(queryInput)
+			var query = Model.find(queryInput.conditions, queryInput.projection, queryInput.opts);
+			requestHelper.stdExec (res, query, next);
 		}
 		catch(ex){
 			console.log(ex)
-			requestHelper.sendJsonRes (res, 500, {status: 'failure', message: ex});
+			requestHelper.sendJsonRes (res, 500, {message: ex});
 		}
 	};
 }();
