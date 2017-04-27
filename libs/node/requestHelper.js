@@ -17,15 +17,33 @@ module.exports = new function () {
 		if (Object.keys(qs).length) {
 			reqOptions.qs = qs;
 		};
-
 		try{
 			request (reqOptions, function(err, response, body){
-				var data = dataFilter ? dataFilter(body.data) : body.data;
+				var data = dataFilter ? dataFilter (body.data) : body.data;
 
 				// for other actions like logging
 				// pass many params, but author of otherAction can choose some to use
 				if (otherAction){
 					otherAction (body, err, response, req, res, reqOptions);
+				}
+
+				res.status (response.statusCode);
+
+				if (response.statusCode != 200 && response.statusCode != 201){
+					var error = {
+						user:{
+
+						},
+						stack: body.message,
+						status: response.statusCode,
+						look:{
+							title: 'Error ',
+							css:[],
+							js:[]
+						}
+					}
+
+					res.render ('error', {error: error});
 				}
 
 				send (req, res, view, data, cb);
@@ -40,7 +58,8 @@ module.exports = new function () {
 		var method = 'GET';
 		var returnJson = true;
 		var body = {};
-		send = send ? send : this.render;
+		qs = qs ? qs : req.query;
+		send = send ? send : function (req, res, view, data, cb){res.render (view, data, cb)};
 		this.callApi (req, res, apiUrl, method, returnJson, view, qs, body, dataFilter, send, otherAction, cb);
 	}
 
@@ -48,13 +67,10 @@ module.exports = new function () {
 		var method = 'POST';
 		var returnJson = true;
 		var qs = {};
+		body = body ? body : req.body;
+		send = send ? send : function (req, res, view, data, cb){res.render (view, data, cb)};
 		this.callApi (req, res, apiUrl, method, returnJson, view, qs, body, dataFilter, send, otherAction, cb);
 	}
-
-	this.render = function (req, res, view, data, status, cb) {
-		res.status (status ? status : 200);
-		res.render(view, data, cb);
-	};
 
 	this.sendJsonRes = function (res, status, content){
 		res.status(status);
@@ -62,26 +78,33 @@ module.exports = new function () {
 	};
 
 	this.stdExec = function (res, query) {
+		var thisObj = this;
 		try {
-			query.exec(function (err, data){	
+			query.exec(function (err, data) {
+
 				if (err){
-					this.sendJsonRes(res, 404, {message: err});
+					console.log (err);
+					thisObj.sendJsonRes(res, 400, {message: err});
+					return
+				}
+				else if (!data) {
+					console.log ('empty results');
+					thisObj.sendJsonRes(res, 400, {
+						message: 'empty results'
+					});
 					return
 				}
 
-				if (!data) {
-					this.sendJsonRes(res, 404, {
-						message: 'empty results'
-					});
-
+				else {
+					thisObj.sendJsonRes (res, 200, {message: 'success', data: data});
 					return
 				}
 				
-				this.sendJsonRes (res, 200, {message: 'success', data: data});
 			});
 		}
 		catch (err) {
-			this.sendJsonRes(res, 404, {
+			console.log (err);
+			this.sendJsonRes(res, 500, {
 				message: err,
 			});
 		}				
