@@ -1,33 +1,20 @@
 var MGDB = require('../../libs/node/db').MGDB;
-var helper = require('../../libs/node/helper');
-var apiOptions = helper.getAPIOption();
 
-// FIX: should use local when cannot connect to remote db
-if (process.env.CONNECTED_DB == 'local'){
+if (process.env.NODE_ENV === 'development'){
 	var host = 'localhost';
-	var port = 27017;
-	var username = 'contentAdmin';
-	var passwd = 'greenspace';
-	var db = 'pos';	
 }
-else {
-	var host = '104.199.160.180';
-	var port = 27017;
-	var username = 'contentAdmin';
-	var passwd = 'greenspace';
-	var db = 'pos';	
+
+else if (process.env.NODE_ENV === 'production'){
+	var host = process.env.DB_REMOTE_HOST;
 };
+
+var port = process.env.DB_PORT;
+var username = process.env.DB_USERNAME;
+var passwd = process.env.DB_PWS;
+var db = process.env.DB_NAME;	
 
 var mgdb = new MGDB (host, port, db, username, passwd);
 
 mgdb.connect();
 
 require('./users');
-require('./customers');
-require('./companies');
-require('./depts');
-require('./products');
-require('./orders');
-require('./transactions');
-require('./bookings');
-require('./assets');

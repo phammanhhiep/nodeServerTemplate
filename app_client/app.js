@@ -45,21 +45,9 @@ function checkPermission ($q, authentication) {
 function LayoutCtrl ($scope, $location) {
 	$scope.layout = {};
 	$scope.layout.loginBtn = true;
-	$scope.layout.customerNumber = 100; // TESTING
-	$scope.layout.bookingNumber = 20; // TESTING
-	$scope.layout.parkingLotNumber = 15; // TESTING
-	$scope.layout.today = new Date ();
 
-	$scope.layout.updateAfterLogin = function (storeName) {
-		if (!storeName)
-			storeName = 'Green Space Chua Lang 82/70';
-		$scope.layout.storeName = storeName;
-		$scope.layout.accountBtn = true;
-		$scope.layout.notiBtn = true;
-		$scope.layout.sideBarMenu = true;
-		$scope.layout.sideBarMenu = true;
-		$scope.layout.commonStatisticBar = true;
-		$scope.layout.loginBtn = false;
+	$scope.layout.updateAfterLogin = function (something) {
+		// 
 	};
 
 	$scope.layout.updateMessage = function (message, mode) {

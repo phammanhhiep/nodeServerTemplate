@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var passport = require('passport');
 var jwt = require ('express-jwt');
+var othersCtrl = require("../controllers/others");
+
 
 var auth = jwt ({
     secret: process.env.JWT_SECRET,

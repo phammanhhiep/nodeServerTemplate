@@ -1,6 +1,5 @@
 (function () {
 	app
-		.module ('posApp')
 		.service ('authentication', ['$window', '$http', authentication]);
 
 	function authentication ($window, $http) {
